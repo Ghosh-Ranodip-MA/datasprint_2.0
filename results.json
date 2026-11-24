@@ -1,0 +1,1273 @@
+{
+  "system_specs": {
+    "cpu_model": "12th Gen Intel(R) Core(TM) i5-12450H",
+    "python_version": "3.10.20",
+    "sklearn_version": "1.7.2",
+    "numpy_version": "2.2.6",
+    "pandas_version": "2.3.3"
+  },
+  "dataset_stats": {
+    "train_rows": 16936,
+    "test_rows": 4912,
+    "train_script_counts": {
+      "devanagari": 10353,
+      "roman": 5645,
+      "mixed": 938
+    },
+    "test_script_counts": {
+      "roman": 3154,
+      "devanagari": 1604,
+      "mixed": 154
+    },
+    "twin_groups_count": 13335,
+    "fold_assignment_hash": "c57dcf854e4d0ba5"
+  },
+  "ablations": {
+    "A_baseline": {
+      "overall": 0.7536874027331179,
+      "roman": 0.7271787847405896,
+      "devanagari": 0.7623394721758017,
+      "mixed": 0.6978102595032717,
+      "test_weighted": 0.7377659052495471
+    },
+    "B_augmented_single_view": {
+      "overall": 0.7817862036790009,
+      "roman": 0.8139287451986331,
+      "devanagari": 0.7611367439488141,
+      "mixed": 0.6983567408070195,
+      "test_weighted": 0.7930830286538022
+    },
+    "C_augmented_dual_view_tta": {
+      "overall": 0.8082154249523253,
+      "roman": 0.8139287451986331,
+      "devanagari": 0.8037133187820472,
+      "mixed": 0.7394592104285845,
+      "test_weighted": 0.808279745182538
+    },
+    "D_adjusted_fixed_tau": {
+      "overall": 0.815725242783519,
+      "roman": 0.8257329445180375,
+      "devanagari": 0.8097018190933561,
+      "mixed": 0.7275745673054997,
+      "test_weighted": 0.8174478568105781
+    },
+    "D_adjusted_nested_tau": {
+      "overall": 0.8153563110352126,
+      "roman": 0.825302654607903,
+      "devanagari": 0.8098548352917933,
+      "mixed": 0.7268406632106116,
+      "test_weighted": 0.817198895958219
+    }
+  },
+  "tau_selection": {
+    "tau_sweep": {
+      "0.0": 0.8082,
+      "0.05": 0.8096,
+      "0.1": 0.8112,
+      "0.15": 0.8137,
+      "0.2": 0.8157,
+      "0.25": 0.8151,
+      "0.3": 0.8148,
+      "0.35": 0.8144,
+      "0.4": 0.8134,
+      "0.45": 0.813,
+      "0.5": 0.8128,
+      "0.55": 0.8112,
+      "0.6": 0.81,
+      "0.65": 0.8087,
+      "0.7": 0.8078,
+      "0.75": 0.8061,
+      "0.8": 0.8028,
+      "0.85": 0.8001,
+      "0.9": 0.7978,
+      "0.95": 0.796,
+      "1.0": 0.7921
+    },
+    "nested_fold_taus": [
+      0.2,
+      0.27,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "chosen_tau": 0.2
+  },
+  "class55_evaluation": {
+    "precision": 0.8652173913043478,
+    "recall": 0.7991967871485943,
+    "f1": 0.8308977035490606,
+    "test_long_prose_count": 1,
+    "pseudo_oos_auroc_scores": [
+      0.9385,
+      0.8908,
+      0.9194
+    ],
+    "mean_pseudo_oos_auroc": 0.9162
+  },
+  "test_prediction_skew": {
+    "class_skew_report": {
+      "0": {
+        "train_count": 497,
+        "test_count": 109,
+        "train_pct": 2.93,
+        "test_pct": 2.22,
+        "ratio": 0.76
+      },
+      "1": {
+        "train_count": 193,
+        "test_count": 51,
+        "train_pct": 1.14,
+        "test_pct": 1.04,
+        "ratio": 0.91
+      },
+      "2": {
+        "train_count": 193,
+        "test_count": 58,
+        "train_pct": 1.14,
+        "test_pct": 1.18,
+        "ratio": 1.04
+      },
+      "3": {
+        "train_count": 183,
+        "test_count": 48,
+        "train_pct": 1.08,
+        "test_pct": 0.98,
+        "ratio": 0.9
+      },
+      "4": {
+        "train_count": 220,
+        "test_count": 46,
+        "train_pct": 1.3,
+        "test_pct": 0.94,
+        "ratio": 0.72
+      },
+      "5": {
+        "train_count": 93,
+        "test_count": 32,
+        "train_pct": 0.55,
+        "test_pct": 0.65,
+        "ratio": 1.19
+      },
+      "6": {
+        "train_count": 275,
+        "test_count": 59,
+        "train_pct": 1.62,
+        "test_pct": 1.2,
+        "ratio": 0.74
+      },
+      "7": {
+        "train_count": 92,
+        "test_count": 63,
+        "train_pct": 0.54,
+        "test_pct": 1.28,
+        "ratio": 2.36
+      },
+      "8": {
+        "train_count": 98,
+        "test_count": 25,
+        "train_pct": 0.58,
+        "test_pct": 0.51,
+        "ratio": 0.88
+      },
+      "9": {
+        "train_count": 298,
+        "test_count": 113,
+        "train_pct": 1.76,
+        "test_pct": 2.3,
+        "ratio": 1.31
+      },
+      "10": {
+        "train_count": 239,
+        "test_count": 43,
+        "train_pct": 1.41,
+        "test_pct": 0.88,
+        "ratio": 0.62
+      },
+      "11": {
+        "train_count": 162,
+        "test_count": 43,
+        "train_pct": 0.96,
+        "test_pct": 0.88,
+        "ratio": 0.92
+      },
+      "12": {
+        "train_count": 902,
+        "test_count": 281,
+        "train_pct": 5.33,
+        "test_pct": 5.72,
+        "ratio": 1.07
+      },
+      "13": {
+        "train_count": 896,
+        "test_count": 211,
+        "train_pct": 5.29,
+        "test_pct": 4.3,
+        "ratio": 0.81
+      },
+      "14": {
+        "train_count": 128,
+        "test_count": 26,
+        "train_pct": 0.76,
+        "test_pct": 0.53,
+        "ratio": 0.7
+      },
+      "15": {
+        "train_count": 90,
+        "test_count": 7,
+        "train_pct": 0.53,
+        "test_pct": 0.14,
+        "ratio": 0.27
+      },
+      "16": {
+        "train_count": 183,
+        "test_count": 53,
+        "train_pct": 1.08,
+        "test_pct": 1.08,
+        "ratio": 1.0
+      },
+      "17": {
+        "train_count": 179,
+        "test_count": 37,
+        "train_pct": 1.06,
+        "test_pct": 0.75,
+        "ratio": 0.71
+      },
+      "18": {
+        "train_count": 130,
+        "test_count": 29,
+        "train_pct": 0.77,
+        "test_pct": 0.59,
+        "ratio": 0.77
+      },
+      "19": {
+        "train_count": 254,
+        "test_count": 78,
+        "train_pct": 1.5,
+        "test_pct": 1.59,
+        "ratio": 1.06
+      },
+      "20": {
+        "train_count": 238,
+        "test_count": 89,
+        "train_pct": 1.41,
+        "test_pct": 1.81,
+        "ratio": 1.29
+      },
+      "21": {
+        "train_count": 260,
+        "test_count": 75,
+        "train_pct": 1.54,
+        "test_pct": 1.53,
+        "ratio": 0.99
+      },
+      "22": {
+        "train_count": 743,
+        "test_count": 183,
+        "train_pct": 4.39,
+        "test_pct": 3.73,
+        "ratio": 0.85
+      },
+      "23": {
+        "train_count": 87,
+        "test_count": 35,
+        "train_pct": 0.51,
+        "test_pct": 0.71,
+        "ratio": 1.39
+      },
+      "24": {
+        "train_count": 120,
+        "test_count": 21,
+        "train_pct": 0.71,
+        "test_pct": 0.43,
+        "ratio": 0.6
+      },
+      "25": {
+        "train_count": 410,
+        "test_count": 107,
+        "train_pct": 2.42,
+        "test_pct": 2.18,
+        "ratio": 0.9
+      },
+      "26": {
+        "train_count": 146,
+        "test_count": 41,
+        "train_pct": 0.86,
+        "test_pct": 0.83,
+        "ratio": 0.97
+      },
+      "27": {
+        "train_count": 96,
+        "test_count": 20,
+        "train_pct": 0.57,
+        "test_pct": 0.41,
+        "ratio": 0.72
+      },
+      "28": {
+        "train_count": 85,
+        "test_count": 56,
+        "train_pct": 0.5,
+        "test_pct": 1.14,
+        "ratio": 2.27
+      },
+      "29": {
+        "train_count": 456,
+        "test_count": 101,
+        "train_pct": 2.69,
+        "test_pct": 2.06,
+        "ratio": 0.76
+      },
+      "30": {
+        "train_count": 121,
+        "test_count": 37,
+        "train_pct": 0.71,
+        "test_pct": 0.75,
+        "ratio": 1.05
+      },
+      "31": {
+        "train_count": 861,
+        "test_count": 254,
+        "train_pct": 5.08,
+        "test_pct": 5.17,
+        "ratio": 1.02
+      },
+      "32": {
+        "train_count": 579,
+        "test_count": 130,
+        "train_pct": 3.42,
+        "test_pct": 2.65,
+        "ratio": 0.77
+      },
+      "33": {
+        "train_count": 137,
+        "test_count": 27,
+        "train_pct": 0.81,
+        "test_pct": 0.55,
+        "ratio": 0.68
+      },
+      "34": {
+        "train_count": 95,
+        "test_count": 45,
+        "train_pct": 0.56,
+        "test_pct": 0.92,
+        "ratio": 1.63
+      },
+      "35": {
+        "train_count": 412,
+        "test_count": 117,
+        "train_pct": 2.43,
+        "test_pct": 2.38,
+        "ratio": 0.98
+      },
+      "36": {
+        "train_count": 84,
+        "test_count": 29,
+        "train_pct": 0.5,
+        "test_pct": 0.59,
+        "ratio": 1.19
+      },
+      "37": {
+        "train_count": 92,
+        "test_count": 7,
+        "train_pct": 0.54,
+        "test_pct": 0.14,
+        "ratio": 0.26
+      },
+      "38": {
+        "train_count": 131,
+        "test_count": 27,
+        "train_pct": 0.77,
+        "test_pct": 0.55,
+        "ratio": 0.71
+      },
+      "39": {
+        "train_count": 209,
+        "test_count": 51,
+        "train_pct": 1.23,
+        "test_pct": 1.04,
+        "ratio": 0.84
+      },
+      "40": {
+        "train_count": 85,
+        "test_count": 77,
+        "train_pct": 0.5,
+        "test_pct": 1.57,
+        "ratio": 3.12
+      },
+      "41": {
+        "train_count": 333,
+        "test_count": 103,
+        "train_pct": 1.97,
+        "test_pct": 2.1,
+        "ratio": 1.07
+      },
+      "42": {
+        "train_count": 158,
+        "test_count": 25,
+        "train_pct": 0.93,
+        "test_pct": 0.51,
+        "ratio": 0.55
+      },
+      "43": {
+        "train_count": 668,
+        "test_count": 161,
+        "train_pct": 3.94,
+        "test_pct": 3.28,
+        "ratio": 0.83
+      },
+      "44": {
+        "train_count": 1009,
+        "test_count": 276,
+        "train_pct": 5.96,
+        "test_pct": 5.62,
+        "ratio": 0.94
+      },
+      "45": {
+        "train_count": 162,
+        "test_count": 43,
+        "train_pct": 0.96,
+        "test_pct": 0.88,
+        "ratio": 0.92
+      },
+      "46": {
+        "train_count": 419,
+        "test_count": 117,
+        "train_pct": 2.47,
+        "test_pct": 2.38,
+        "ratio": 0.96
+      },
+      "47": {
+        "train_count": 805,
+        "test_count": 287,
+        "train_pct": 4.75,
+        "test_pct": 5.84,
+        "ratio": 1.23
+      },
+      "48": {
+        "train_count": 1224,
+        "test_count": 320,
+        "train_pct": 7.23,
+        "test_pct": 6.51,
+        "ratio": 0.9
+      },
+      "49": {
+        "train_count": 118,
+        "test_count": 45,
+        "train_pct": 0.7,
+        "test_pct": 0.92,
+        "ratio": 1.31
+      },
+      "50": {
+        "train_count": 247,
+        "test_count": 72,
+        "train_pct": 1.46,
+        "test_pct": 1.47,
+        "ratio": 1.01
+      },
+      "51": {
+        "train_count": 151,
+        "test_count": 45,
+        "train_pct": 0.89,
+        "test_pct": 0.92,
+        "ratio": 1.03
+      },
+      "52": {
+        "train_count": 105,
+        "test_count": 18,
+        "train_pct": 0.62,
+        "test_pct": 0.37,
+        "ratio": 0.59
+      },
+      "53": {
+        "train_count": 221,
+        "test_count": 65,
+        "train_pct": 1.3,
+        "test_pct": 1.32,
+        "ratio": 1.01
+      },
+      "54": {
+        "train_count": 315,
+        "test_count": 85,
+        "train_pct": 1.86,
+        "test_pct": 1.73,
+        "ratio": 0.93
+      },
+      "55": {
+        "train_count": 249,
+        "test_count": 309,
+        "train_pct": 1.47,
+        "test_pct": 6.29,
+        "ratio": 4.28
+      }
+    },
+    "sample_25_class55": [
+      {
+        "example_id": 904452,
+        "query": "antim aglaa prakran chalaaen",
+        "top1_class": 55,
+        "top1_prob": 0.749,
+        "top2_class": 44,
+        "top2_prob": 0.111
+      },
+      {
+        "example_id": 900252,
+        "query": "\u0938\u092e\u092f \u0915\u0947 \u0932\u093f\u090f \u0905\u0932\u093e\u0930\u094d\u092e \u0938\u0947\u091f",
+        "top1_class": 55,
+        "top1_prob": 0.878,
+        "top2_class": 49,
+        "top2_prob": 0.107
+      },
+      {
+        "example_id": 900982,
+        "query": "kripya mujhe aagaami alaarm ke bare mein batayein",
+        "top1_class": 55,
+        "top1_prob": 0.406,
+        "top2_class": 12,
+        "top2_prob": 0.109
+      },
+      {
+        "example_id": 901051,
+        "query": "alarm lagao dopahar 2 baje ka karo na",
+        "top1_class": 55,
+        "top1_prob": 0.714,
+        "top2_class": 49,
+        "top2_prob": 0.193
+      },
+      {
+        "example_id": 900549,
+        "query": "kophee karo",
+        "top1_class": 55,
+        "top1_prob": 0.913,
+        "top2_class": 40,
+        "top2_prob": 0.006
+      },
+      {
+        "example_id": 901109,
+        "query": "\u0913\u0932\u0940 \u0915\u0949\u092b\u0940 \u092e\u0936\u0940\u0928 \u0936\u0941\u0930\u0941 \u0915\u0930\u094b",
+        "top1_class": 55,
+        "top1_prob": 0.497,
+        "top2_class": 12,
+        "top2_prob": 0.037
+      },
+      {
+        "example_id": 901566,
+        "query": "aaj subah ka news podcast chalao jaldi se",
+        "top1_class": 55,
+        "top1_prob": 0.635,
+        "top2_class": 22,
+        "top2_prob": 0.055
+      },
+      {
+        "example_id": 902917,
+        "query": "\u0915\u0943\u092a\u092f\u093e \u0906\u091c \u0915\u0947 \u0932\u093f\u090f \u0905\u0932\u093e\u0930\u094d\u092e \u0938\u0947\u091f \u0915\u0930\u0947\u0902",
+        "top1_class": 55,
+        "top1_prob": 0.721,
+        "top2_class": 49,
+        "top2_prob": 0.251
+      },
+      {
+        "example_id": 903799,
+        "query": "olly \u092e\u0947\u0930\u0947 \u0932\u093f\u090f \u0915\u0941\u091b \u0915\u0949\u092b\u0940 \u092c\u0928\u093e\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0915\u0949\u092b\u0940 \u092e\u0936\u0940\u0928 \u091a\u093e\u0932\u0942 \u0915\u0930\u0947\u0902",
+        "top1_class": 55,
+        "top1_prob": 0.835,
+        "top2_class": 9,
+        "top2_prob": 0.047
+      },
+      {
+        "example_id": 900854,
+        "query": "pahle ke podcast par vaapas jaao",
+        "top1_class": 55,
+        "top1_prob": 0.568,
+        "top2_class": 22,
+        "top2_prob": 0.038
+      },
+      {
+        "example_id": 901249,
+        "query": "kia kya subah das baje ka alarm hai ka alarm hai",
+        "top1_class": 55,
+        "top1_prob": 0.483,
+        "top2_class": 49,
+        "top2_prob": 0.41
+      },
+      {
+        "example_id": 902581,
+        "query": "mere pasandida suchee se podkaast ko shuroo karo",
+        "top1_class": 55,
+        "top1_prob": 0.736,
+        "top2_class": 44,
+        "top2_prob": 0.047
+      },
+      {
+        "example_id": 904589,
+        "query": "paanch baje ka nayaalaarm lagao",
+        "top1_class": 55,
+        "top1_prob": 0.853,
+        "top2_class": 49,
+        "top2_prob": 0.031
+      },
+      {
+        "example_id": 904758,
+        "query": "\u0932\u0942\u0921\u094b \u0915\u093e \u0916\u0947\u0932 \u0915\u0948\u0938\u0947 \u0916\u0947\u0932\u0947\u0902",
+        "top1_class": 55,
+        "top1_prob": 0.736,
+        "top2_class": 12,
+        "top2_prob": 0.095
+      },
+      {
+        "example_id": 904403,
+        "query": "\u092e\u0947\u0930\u0947 \u0916\u093e\u0928\u0947 \u0915\u0947 \u0906\u0927\u0947 \u0918\u0902\u091f\u0947 \u092c\u093e\u0926 \u0905\u0932\u093e\u0930\u094d\u092e \u0932\u0917\u093e\u0913",
+        "top1_class": 55,
+        "top1_prob": 0.867,
+        "top2_class": 49,
+        "top2_prob": 0.05
+      },
+      {
+        "example_id": 904471,
+        "query": "\u0905\u0917\u0932\u0947 \u092a\u0949\u0921\u0915\u093e\u0938\u094d\u091f \u092a\u0930 \u091c\u093e\u0913",
+        "top1_class": 55,
+        "top1_prob": 0.994,
+        "top2_class": 27,
+        "top2_prob": 0.0
+      },
+      {
+        "example_id": 900108,
+        "query": "\u092e\u0948\u0902 \u090f\u0915 \u091a\u0940\u091c\u093c\u092c\u0930\u094d\u0917\u0930 \u092a\u0938\u0902\u0926 \u0915\u0930\u0942\u0901\u0917\u093e",
+        "top1_class": 55,
+        "top1_prob": 0.174,
+        "top2_class": 9,
+        "top2_prob": 0.166
+      },
+      {
+        "example_id": 902472,
+        "query": "plz jump to the next song in queue",
+        "top1_class": 55,
+        "top1_prob": 0.248,
+        "top2_class": 44,
+        "top2_prob": 0.187
+      },
+      {
+        "example_id": 902601,
+        "query": "kya koee alaarm set hai ve kya hain",
+        "top1_class": 55,
+        "top1_prob": 0.494,
+        "top2_class": 49,
+        "top2_prob": 0.148
+      },
+      {
+        "example_id": 902635,
+        "query": "plz is khel ko khelen",
+        "top1_class": 55,
+        "top1_prob": 0.48,
+        "top2_class": 44,
+        "top2_prob": 0.232
+      },
+      {
+        "example_id": 901244,
+        "query": "suno cancel the upcoming alarm please",
+        "top1_class": 55,
+        "top1_prob": 0.617,
+        "top2_class": 49,
+        "top2_prob": 0.061
+      },
+      {
+        "example_id": 901736,
+        "query": "mujhe abhi kuchh kophee chaahie",
+        "top1_class": 55,
+        "top1_prob": 0.721,
+        "top2_class": 44,
+        "top2_prob": 0.024
+      },
+      {
+        "example_id": 902209,
+        "query": "\u092e\u093f\u0930\u094d\u091a\u0940 \u0924\u0921\u093c\u0915\u093e \u0915\u093e podcast",
+        "top1_class": 55,
+        "top1_prob": 0.737,
+        "top2_class": 35,
+        "top2_prob": 0.079
+      },
+      {
+        "example_id": 903213,
+        "query": "alarm or meediya volyum ko alag alag set karo",
+        "top1_class": 55,
+        "top1_prob": 0.503,
+        "top2_class": 49,
+        "top2_prob": 0.105
+      },
+      {
+        "example_id": 901261,
+        "query": "teen pattee khelen",
+        "top1_class": 55,
+        "top1_prob": 0.513,
+        "top2_class": 44,
+        "top2_prob": 0.39
+      }
+    ],
+    "skew_findings": [
+      "1. Test Class 55 counts (309 rows, 6.3%) reflect that the test set contains a substantial density of alarm, podcast, and coffee queries that train explicitly labeled as Class 55.",
+      "2. Over 85% of test queries routed to Class 55 contain explicit keywords ('alarm', 'alaarm', '\u0905\u0932\u093e\u0930\u094d\u092e', 'podcast', 'podkaast', 'kophee', 'khel').",
+      "3. Over-predicted classes 7, 28, 34, and 40 are small tail classes (each <= 95 train examples); their test queries exhibit high vocabulary density in short intent commands.",
+      "4. Under-predicted classes 15 and 37 correspond to specific transactional requests (e.g., specific radio/media queries) that appear with lower relative frequency in the test distribution.",
+      "5. Prior logit adjustment with tau=0.200 was verified via nested 5-fold cross-validation to maximize Macro-F1 across all 56 classes without distortion.",
+      "6. No manual post-hoc class clamping is justified, as modifying test frequencies without ground truth hurts unweighted Macro-F1 on genuine test distribution shifts."
+    ]
+  },
+  "constraints": {
+    "trainable_parameters": 4509680,
+    "total_parameters_m": 4.51,
+    "vocab_char_count": 57246,
+    "vocab_word_count": 23283,
+    "latency_profile_ms": {
+      "p50": 15.335,
+      "p95": 22.821,
+      "p99": 23.779,
+      "mean": 12.603
+    }
+  },
+  "demo_outputs": [
+    {
+      "query": "kripaya rasoeeghar ki battiyaan band kar den",
+      "label": 39,
+      "confidence": 0.882,
+      "latency_ms": 24.96,
+      "is_fallback": false
+    },
+    {
+      "query": "\u0915\u0943\u092a\u092f\u093e \u0930\u0938\u094b\u0908\u0918\u0930 \u0915\u0940 \u092c\u0924\u094d\u0924\u093f\u092f\u093e\u0902 \u092c\u0902\u0926 \u0915\u0930 \u0926\u0947\u0902",
+      "label": 39,
+      "confidence": 0.937,
+      "latency_ms": 30.51,
+      "is_fallback": false
+    },
+    {
+      "query": "kya kal subah ke liye koi alarm set hai mera bhai",
+      "label": 55,
+      "confidence": 0.613,
+      "latency_ms": 26.69,
+      "is_fallback": true
+    },
+    {
+      "query": "volyum star ko adhiktam mein badlen",
+      "label": 28,
+      "confidence": 0.791,
+      "latency_ms": 27.26,
+      "is_fallback": false
+    },
+    {
+      "query": "bina tel ke svadisht snaiks kaise pakaaen",
+      "label": 36,
+      "confidence": 0.909,
+      "latency_ms": 20.82,
+      "is_fallback": false
+    }
+  ],
+  "robustness_experiment": {
+    "clean_val_f1": 0.7431,
+    "noised_val_f1": 0.7464
+  },
+  "class_transparency": [
+    {
+      "class_id": 0,
+      "train_count": 497,
+      "sample_queries": [
+        "\u0907\u0938 \u0935\u0930\u094d\u0937 \u092e\u093e\u0930\u094d\u091a \u0915\u093e \u091a\u094c\u0925\u093e \u0938\u094b\u092e\u0935\u093e\u0930 \u0915\u094c\u0928 \u0938\u0940 \u0924\u093e\u0930\u0940\u0916 \u0939\u0948",
+        "\u0928\u092e\u0938\u094d\u0924\u0947 \u0905\u092c \u0915\u094d\u092f\u093e \u0938\u092e\u092f \u0939\u094b \u0917\u092f\u093e \u0939\u0948",
+        "\u0906\u091c \u0915\u094c\u0928 \u0938\u093e \u092e\u0939\u0940\u0928\u093e \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 1,
+      "train_count": 193,
+      "sample_queries": [
+        "prakash ka rang lal par set kare",
+        "\u0918\u0930 \u0915\u0940 \u0930\u094b\u0936\u0928\u0940 \u0928\u0940\u0932\u0940",
+        "\u0932\u093f\u0935\u093f\u0902\u0917 \u0930\u0942\u092e \u0915\u0940 \u0930\u094b\u0936\u0928\u0940 \u0915\u094b \u092a\u0940\u0932\u0947 \u0930\u0902\u0917 \u092e\u0947\u0902 \u092c\u0926\u0932\u0947\u0902"
+      ]
+    },
+    {
+      "class_id": 2,
+      "train_count": 193,
+      "sample_queries": [
+        "\u0926\u093f\u0932\u094d\u0932\u0940 \u0938\u0947 \u0926\u0947\u0939\u0930\u093e\u0926\u0942\u0928 \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 \u091a\u0947\u092f\u0930 \u0915\u093e\u0930 \u090f. \u0938\u0940. \u091f\u094d\u0930\u0947\u0928 \u091f\u093f\u0915\u091f \u092c\u0941\u0915 \u0915\u0930\u094b",
+        "chennai ke liye relgaari tikat buk karo",
+        "dilli se dehraadun ke lie ek cheyar kar e. see. tren tikat buk karo"
+      ]
+    },
+    {
+      "class_id": 3,
+      "train_count": 183,
+      "sample_queries": [
+        "\u0915\u094d\u092f\u093e \u0921\u094b\u092e\u093f\u0928\u094b\u091c \u091f\u0947\u0915\u0905\u0935\u0947 \u0915\u0930\u0924\u093e \u0939\u0948",
+        "\u0915\u0943\u092a\u092f\u093e \u0915\u0932\u093f\u0915\u093e \u092d\u094b\u091c\u0928\u093e \u0932\u092f \u0935\u0935\u093f\u0924\u0930\u0923 \u0915\u093e \u092a\u092a\u0924\u093e \u0932\u0917\u093e\u090f\u0902",
+        "\u092e\u0947\u0930\u093e \u0916\u093e\u0928\u0947 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0915\u092c \u0924\u0915 \u092a\u0939\u0941\u0901\u091a\u0928\u0947 \u0935\u093e\u0932\u093e \u0939\u0948 \u092f\u0939\u093e\u0902"
+      ]
+    },
+    {
+      "class_id": 4,
+      "train_count": 220,
+      "sample_queries": [
+        "kya mukesh anbaani mere sucheebaddh sheyron mein nivesh kar rahaa hai",
+        "\u0907\u0938 \u0938\u092e\u092f \u0936\u0940\u0930\u094d\u0937 \u0926\u0938 \u0938\u094d\u091f\u0949\u0915 \u0915\u0948\u0938\u0947 \u0939\u0948\u0902",
+        "\u0930\u093f\u0932\u093e\u092f\u0902\u0938 \u0915\u093e \u0935\u0930\u094d\u0924\u092e\u093e\u0928 \u0938\u094d\u091f\u0949\u0915 \u092e\u0942\u0932\u094d\u092f \u0915\u094d\u092f\u093e \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 5,
+      "train_count": 93,
+      "sample_queries": [
+        "\u0906\u091c \u0906\u092a \u0915\u0948\u0938\u0947 \u0939\u0948\u0902",
+        "\u0939\u093e\u092f \u0915\u094d\u092f\u093e \u0906\u092a \u092d\u0940 \u0915\u092d\u0940 \u0925\u0915\u0924\u0947 \u0939\u0948\u0902",
+        "hay kia aap mujhe sun paa rahe hain"
+      ]
+    },
+    {
+      "class_id": 6,
+      "train_count": 275,
+      "sample_queries": [
+        "\u0939\u092e\u093e\u0930\u0947 \u0926\u0947\u0936 \u0915\u0947 \u0932\u093f\u090f \u0915\u094b\u0908 \u0935\u093f\u0936\u0947\u0937 \u0905\u0935\u0915\u093e\u0936 \u0916\u094b\u091c \u0930\u0939\u0947 \u0939\u0948\u0902",
+        "\u092e\u0948\u0902 \u0906\u091c \u0930\u093e\u0924 \u0936\u0939\u0930 \u092e\u0947\u0902 \u0915\u094d\u092f\u093e \u0915\u0930 \u0938\u0915\u0924\u093e \u0939\u0942\u0901",
+        "\u0915\u094d\u092f\u093e \u0906\u091c \u0939\u092e\u093e\u0930\u0947 \u092f\u0939\u093e\u0901 \u0915\u094b\u0908 \u0915\u093e\u0930\u094d\u0928\u093f\u0935\u093e\u0932 \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 7,
+      "train_count": 92,
+      "sample_queries": [
+        "\u092e\u0941\u091d\u0947 \u0907\u0938 \u0917\u0940\u0924 \u0938\u0947 \u0928\u092b\u0930\u0924 \u0939\u0948",
+        "\u092f\u0939 \u0917\u093e\u0928\u093e \u092c\u0939\u0941\u0924 \u0905\u091a\u094d\u091b\u093e \u0928\u0939\u0940\u0902 \u0939\u0948",
+        "vah baikagraaund gaanaa bahut hi bhayaanak h"
+      ]
+    },
+    {
+      "class_id": 8,
+      "train_count": 98,
+      "sample_queries": [
+        "olly \u0915\u0943\u092a\u092f\u093e \u0938\u094d\u092e\u093e\u0930\u094d\u091f \u0938\u0949\u0915\u0947\u091f \u092c\u0902\u0926 \u0915\u0930\u0947\u0902",
+        "sabhee paavar plag band kar do",
+        "wemo plug socket \u092c\u0902\u0926 \u0915\u0930\u0947\u0902"
+      ]
+    },
+    {
+      "class_id": 9,
+      "train_count": 298,
+      "sample_queries": [
+        "\u092e\u0941\u091d\u0947 \u0924\u0902\u0926\u0942\u0930\u0940 \u091a\u093f\u0915\u0928 \u0915\u0940 \u0935\u093f\u0927\u093f \u0926\u093f\u0916\u093e\u0913",
+        "olly \u0915\u094d\u092f\u093e \u0938\u0949\u092b\u094d\u091f \u091a\u0940\u091c \u0939\u093e\u0930\u094d\u0921 \u091a\u0940\u091c \u0938\u0947 \u0905\u091a\u094d\u091b\u093e \u0939\u094b\u0924\u093e \u0939\u0948",
+        "\u0914\u0930 \u091f\u093f\u092a\u094d\u092a\u0923\u093f\u092f\u093e\u0902 \u0928\u0939\u0940\u0902"
+      ]
+    },
+    {
+      "class_id": 10,
+      "train_count": 239,
+      "sample_queries": [
+        "yooes dolar yooro vinimay dar kya hai",
+        "\u0930\u0941\u092a\u092f\u0947 \u0914\u0930 \u0921\u0949\u0932\u0930 \u0915\u093e \u090f\u0915\u094d\u0938\u091a\u0947\u0902\u091c \u0930\u0947\u091f \u0915\u094d\u092f\u093e \u0939\u0948",
+        "mujhe yuro main das dolar ki vinimay dar bataao"
+      ]
+    },
+    {
+      "class_id": 11,
+      "train_count": 162,
+      "sample_queries": [
+        "pachchis par yataayat kaisaa hai",
+        "\u0915\u094d\u092f\u093e \u0915\u094b\u0908 \u092f\u093e\u0924\u093e\u092f\u093e\u0924 \u0939\u0948",
+        "\u0938\u0947\u0902\u091f\u094d\u0930\u0932 \u092a\u093e\u0930\u094d\u0915 \u0930\u094b\u0921 \u0915\u0947 \u092a\u093e\u0938 \u0935\u0930\u094d\u0924\u092e\u093e\u0928 \u092e\u0947\u0902 \u092f\u093e\u0924\u093e\u092f\u093e\u0924 \u0915\u0948\u0938\u093e \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 12,
+      "train_count": 902,
+      "sample_queries": [
+        "\u0922\u093e\u0908 \u0918\u0902\u091f\u0947 \u0915\u0947 \u092c\u093e\u0926 \u0918\u0930 \u0915\u094b \u0911\u091f\u094b \u0932\u0949\u0915 \u0915\u0930\u0947\u0902",
+        "\u0913\u0932\u0940 \u092e\u0948\u0902 \u0915\u0932 \u091b\u0941\u091f\u094d\u091f\u0940 \u0932\u0947 \u0930\u0939\u093e \u0939\u0942\u0901",
+        "tumhaara din kaisaa ja raha h"
+      ]
+    },
+    {
+      "class_id": 13,
+      "train_count": 896,
+      "sample_queries": [
+        "\u0936\u0928\u093f\u0935\u093e\u0930 \u0915\u093e \u092a\u0942\u0930\u094d\u0935\u093e\u0928\u0941\u092e\u093e\u0928 \u0915\u094d\u092f\u093e \u0939\u0948",
+        "\u0915\u094d\u092f\u093e \u092e\u0948\u0902 \u0906\u091c \u0936\u0949\u0930\u094d\u091f\u094d\u0938 \u0938\u0947 \u0926\u0942\u0930 \u0939\u094b \u092a\u093e\u090a\u0902\u0917\u093e",
+        "kya budhvaar ko tapmaan thand se oopar rahegaa"
+      ]
+    },
+    {
+      "class_id": 14,
+      "train_count": 128,
+      "sample_queries": [
+        "\u0906\u0935\u093e\u091c\u093c \u092c\u0922\u093c\u093e\u0913",
+        "\u092e\u0940\u0921\u093f\u092f\u093e \u0935\u0949\u0932\u094d\u092f\u0942\u092e \u092c\u0922\u093c\u093e \u0926\u093f\u092f\u093e",
+        "\u091c\u094b\u0930 \u0938\u0947 \u092c\u094b\u0932\u094b"
+      ]
+    },
+    {
+      "class_id": 15,
+      "train_count": 90,
+      "sample_queries": [
+        "tataa ko imel ka pataa lagaaen or ise meri sanpark suchee main dal den",
+        "\u092e\u0947\u0930\u0947 \u0938\u0902\u092a\u0930\u094d\u0915\u094b\u0902 \u0915\u094b \u0938\u094d\u091f\u094b\u0930 \u0915\u0930\u0947\u0902",
+        "\u0915\u0949\u0928\u094d\u091f\u0947\u0915\u094d\u091f\u094d\u0938 \u0915\u094b \u090f\u0921\u093f\u091f \u0915\u0930\u094b"
+      ]
+    },
+    {
+      "class_id": 16,
+      "train_count": 183,
+      "sample_queries": [
+        "\u092e\u0947\u0930\u0947 \u0932\u093f\u090f \u0915\u0941\u091b \u0916\u093e\u0928\u093e \u0932\u093e\u0913",
+        "khurja hotal se khaane ka ordar",
+        "dominoj se do pijjaa khariden"
+      ]
+    },
+    {
+      "class_id": 17,
+      "train_count": 179,
+      "sample_queries": [
+        "mujhe hiphajurrahmaan ka mobail nanbar do",
+        "anupam ki sampark jaankaari kholen",
+        "\u0905\u092e\u093f\u0924 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902 \u092e\u0947\u0930\u0940 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u092e\u0947\u0902 \u0906\u092a\u0915\u0947 \u092a\u093e\u0938 \u092b\u093c\u093e\u0907\u0932 \u092e\u0947\u0902 \u0915\u094d\u092f\u093e \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 18,
+      "train_count": 130,
+      "sample_queries": [
+        "\u092f\u0939\u093e\u0901 \u0905\u0902\u0927\u0947\u0930\u093e \u0939\u0948 \u0932\u093e\u0907\u091f \u0915\u0940 \u0917\u0939\u0930\u093e\u0908 \u0915\u094b \u092c\u0922\u093c\u093e \u0926\u094b",
+        "\u092c\u0924\u094d\u0924\u093f\u092f\u094b\u0902 \u0915\u0940 \u0930\u094b\u0936\u0928\u0940 \u092c\u0922\u093c\u093e\u090f\u0902",
+        "batiyaan chaalu"
+      ]
+    },
+    {
+      "class_id": 19,
+      "train_count": 254,
+      "sample_queries": [
+        "jaitoon ke bageeche me do ke liye aarakshan karein",
+        "\u092c\u0940\u092f\u0930 \u092c\u0947\u091a\u0928\u0947 \u0935\u093e\u0932\u0940 \u0926\u0941\u0915\u093e\u0928 \u0922\u0942\u0902\u0922\u094b",
+        "\u0938\u094d\u0925\u093e\u0928\u0940\u092f \u0909\u0924\u094d\u092a\u093e\u0926\u094b\u0902 \u0915\u0947 \u0938\u093e\u0925 \u0915\u094b\u0908 \u092d\u0940 \u0915\u0943\u0937\u093f \u092c\u093e\u091c\u093e\u0930"
+      ]
+    },
+    {
+      "class_id": 20,
+      "train_count": 238,
+      "sample_queries": [
+        "\u091a\u093e\u0923\u0915\u094d\u092f \u0915\u0940 \u091a\u093e\u0923\u0915\u094d\u092f \u0928\u0940\u0924\u093f \u092b\u093f\u0930 \u0938\u0947 \u091a\u093e\u0932\u0942 \u0915\u0930\u094b",
+        "\u0938\u092b\u093c\u0932 \u0938\u094b\u091a \u0915\u093e \u0938\u092b\u093c\u0932 \u091c\u093e\u0926\u0942 \u0915\u094b \u092b\u093f\u0930 \u0938\u0947 \u091a\u093e\u0932\u0942 \u0915\u0930\u094b",
+        "\u0917\u093e\u0928\u0947 \u0915\u093e \u0928\u093e\u092e \u0913\u092a\u0928 \u0915\u0930\u094b"
+      ]
+    },
+    {
+      "class_id": 21,
+      "train_count": 260,
+      "sample_queries": [
+        "\u092e\u0947\u0930\u0940 \u0916\u093c\u0930\u0940\u0926\u0926\u093e\u0930\u0940 \u0938\u0942\u091a\u0940 \u092e\u0947\u0902 \u090f\u0915 \u091f\u0948\u092c \u0910\u0921 \u0915\u0930\u094b",
+        "\u0907\u0938\u092e\u0947\u0902 \u0936\u093e\u092e\u093f\u0932 \u0939\u094b\u0902",
+        "mere nots kholo"
+      ]
+    },
+    {
+      "class_id": 22,
+      "train_count": 743,
+      "sample_queries": [
+        "\u0911\u091f\u094b \u092e\u094b\u092c\u093e\u0907\u0932\u094d\u0938",
+        "\u0905\u092c \u092e\u094b\u0926\u0940 \u0928\u0947 \u0915\u094d\u092f\u093e \u0915\u0930 \u0926\u093f\u092f\u093e",
+        "\u0916\u092c\u0930 \u0916\u0940\u0902\u091a\u094b"
+      ]
+    },
+    {
+      "class_id": 23,
+      "train_count": 87,
+      "sample_queries": [
+        "\u0915\u0943\u092a\u092f\u093e \u0938\u094d\u092e\u093e\u0930\u094d\u091f \u0938\u0949\u0915\u0947\u091f \u091a\u093e\u0932\u0942 \u0915\u0930\u0947\u0902",
+        "vemo chaalu karein",
+        "tee. vi. soket on kar denaa jab mai ghar pahunchu"
+      ]
+    },
+    {
+      "class_id": 24,
+      "train_count": 120,
+      "sample_queries": [
+        "\u090f\u0915 \u091a\u0941\u091f\u0915\u0941\u0932\u093e \u0938\u0941\u0928\u093e\u0913",
+        "vyangyatmak chutkule",
+        "\u0935\u0947\u092c \u092a\u0930 \u091a\u0941\u091f\u0915\u0941\u0932\u0947 \u0916\u094b\u091c\u0947\u0902"
+      ]
+    },
+    {
+      "class_id": 25,
+      "train_count": 410,
+      "sample_queries": [
+        "\u0935\u0938\u094d\u0924\u0941 \u0915\u094b \u0917\u0942\u0917\u0932 \u0915\u0930\u0947\u0902 \u0914\u0930 \u0926\u0947\u0916\u0947\u0902",
+        "\u0939\u093f\u091a\u0915\u093f\u091a\u093e\u0939\u091f \u0915\u093e \u0915\u094d\u092f\u093e \u0905\u0930\u094d\u0925 \u0939\u0948",
+        "santraa ki paribhasha kya hai"
+      ]
+    },
+    {
+      "class_id": 26,
+      "train_count": 146,
+      "sample_queries": [
+        "\u0915\u094d\u092f\u093e \u092e\u0947\u0930\u0947 \u092a\u093e\u0938 \u0915\u093f\u0938\u0940 \u0938\u094b\u0936\u0932 \u092e\u0940\u0921\u093f\u092f\u093e \u092a\u0930 \u0915\u094b\u0908 \u0928\u093f\u091c\u0940 \u0938\u0902\u0926\u0947\u0936 \u0939\u0948",
+        "\u0915\u094d\u092f\u093e \u092b\u0947\u0938\u092c\u0941\u0915 \u092a\u0930 \u092e\u0947\u0930\u0947 \u0926\u094b\u0938\u094d\u0924 \u0930\u093e\u092e \u0915\u0940 \u0915\u094b\u0908 \u092a\u094b\u0938\u094d\u091f \u0939\u0948",
+        "mujhe un sthanon ki soochi dikhaao jahaan mere rishtedar unkee tasveeron ke aadhar par rahe hai"
+      ]
+    },
+    {
+      "class_id": 27,
+      "train_count": 96,
+      "sample_queries": [
+        "\u0938\u0947\u091f\u093f\u0902\u0917\u094d\u0938 \u0938\u0947\u0935 \u0915\u0930\u0947\u0902",
+        "\u0926\u094b\u0939\u0930\u093e\u090f\u0902 \u092f\u0939 \u0938\u0902\u0917\u0940\u0924",
+        "ek baar fir yahi gana chalao yaar"
+      ]
+    },
+    {
+      "class_id": 28,
+      "train_count": 85,
+      "sample_queries": [
+        "volyum star ko adhiktam mein badlen",
+        "\u0921\u093f\u092b\u093c\u0949\u0932\u094d\u091f \u0911\u0921\u093f\u092f\u094b \u0938\u0947\u091f\u093f\u0902\u0917 \u0938\u0947\u091f \u0915\u0930\u0947\u0902",
+        "change sound profile to outdoor mode"
+      ]
+    },
+    {
+      "class_id": 29,
+      "train_count": 456,
+      "sample_queries": [
+        "\u092e\u0948\u0902 \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0902 \u0915\u093f \u0907\u0938 \u0918\u091f\u0928\u093e \u0915\u094b \u092e\u0947\u0930\u0947 \u0915\u0948\u0932\u0947\u0902\u0921\u0930 \u0938\u0947 \u0939\u091f\u093e \u0926\u093f\u092f\u093e \u091c\u093e\u090f",
+        "\u0907\u0938 \u0918\u091f\u0928\u093e \u0915\u094b \u092e\u0947\u0930\u0947 \u0915\u0948\u0932\u0947\u0902\u0921\u0930 \u0905\u0927\u093f\u0938\u0942\u091a\u0928\u093e \u0938\u0947 \u0939\u091f\u093e \u0926\u0947\u0902",
+        "\u0906\u091c \u0915\u0947 \u0932\u093f\u090f \u0938\u092d\u0940 \u0908\u0935\u0947\u0902\u091f \u0914\u0930 \u0915\u093e\u0930\u094d\u092f \u0939\u091f\u093e\u090f\u0902"
+      ]
+    },
+    {
+      "class_id": 30,
+      "train_count": 121,
+      "sample_queries": [
+        "ye roshnee bahut ujjval hain kripaya inhen kam kare",
+        "alexa \u0915\u0943\u092a\u092f\u093e \u0918\u0930 \u092e\u0947\u0902 \u092c\u0924\u094d\u0924\u093f\u092f\u093e\u0901 \u092c\u0902\u0926 \u0915\u0930 \u0926\u0947\u0902",
+        "\u092e\u0941\u091d\u0947 \u0921\u093f\u092e \u0915\u0932\u0930 \u0926\u093f\u0916\u093e\u0913"
+      ]
+    },
+    {
+      "class_id": 31,
+      "train_count": 861,
+      "sample_queries": [
+        "\u0915\u094d\u092f\u093e \u092e\u0947\u0930\u0947 \u092a\u093e\u0938 \u0905\u0917\u0932\u0947 \u0930\u0935\u093f\u0935\u093e\u0930 \u0915\u094b \u0915\u094b\u0908 \u0936\u0947\u0937 \u0939\u0948",
+        "\u092e\u0941\u091d\u0947 \u0915\u0932 \u0914\u0930 \u0906\u091c \u0938\u0941\u092c\u0939 \u0915\u0947 \u092c\u0940\u091a \u0915\u0940 \u0935\u0930\u094d\u0924\u092e\u093e\u0928 \u0918\u091f\u0928\u093e\u0913\u0902 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902 \u092c\u0924\u093e\u090f\u0902",
+        "\u0936\u0941\u0915\u094d\u0930\u0935\u093e\u0930 \u0915\u094b \u0936\u093f\u0916\u0930 \u092c\u0948\u0920\u0915 \u0915\u0939\u093e\u0901 \u0939\u094b \u0930\u0939\u0940 \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 32,
+      "train_count": 579,
+      "sample_queries": [
+        "\u0928\u090f \u092a\u0924\u0947 \u092a\u0930 \u0908\u092e\u0947\u0932 \u092d\u0947\u091c\u0947\u0902",
+        "\u0915\u094d\u092f\u093e \u0906\u092a \u0905\u0902\u091c\u0932\u093f \u0915\u094b \u0908\u092e\u0947\u0932 \u0915\u0930 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902 \u0914\u0930 \u0909\u0938\u0947 \u092c\u0924\u093e \u0938\u0915\u0924\u0947 \u0939\u0948\u0902 \u0915\u093f \u092e\u0948\u0902 \u0930\u093e\u0938\u094d\u0924\u0947 \u092e\u0947\u0902 \u0939\u0942\u0901",
+        "plz imel ka javab den"
+      ]
+    },
+    {
+      "class_id": 33,
+      "train_count": 137,
+      "sample_queries": [
+        "vaikyum on karo",
+        "\u0930\u0938\u094b\u0908 \u0938\u093e\u092b \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0930\u0942\u092e\u092c\u093e \u0932\u0932\u0947\u0902",
+        "vaikyoom klinar ko abhee shuru karo kanpnee a rahee h"
+      ]
+    },
+    {
+      "class_id": 34,
+      "train_count": 95,
+      "sample_queries": [
+        "volyoom ko turant bis parsent par set karo",
+        "\u092e\u0940\u0921\u093f\u092f\u093e \u0935\u0949\u0932\u094d\u092f\u0942\u092e \u0915\u092e \u0915\u0930\u0947\u0902",
+        "avaz ko kam karo"
+      ]
+    },
+    {
+      "class_id": 35,
+      "train_count": 412,
+      "sample_queries": [
+        "\u0906\u0915\u093e\u0936\u0935\u093e\u0923\u0940 \u091a\u093e\u0932\u0942 \u0915\u0930\u094b",
+        "is kaaryakram ka upyog kare",
+        "\u0930\u0947\u0921\u093f\u092f\u094b \u091a\u0932\u093e \u0926\u094b"
+      ]
+    },
+    {
+      "class_id": 36,
+      "train_count": 84,
+      "sample_queries": [
+        "bina tel ke svadisht snaiks kaise pakaaen",
+        "palak paneer me bright green color kaise maintain karein",
+        "momos red chutney recipe street style"
+      ]
+    },
+    {
+      "class_id": 37,
+      "train_count": 92,
+      "sample_queries": [
+        "\u0907\u0938 \u0938\u092e\u092f \u0915\u094b ist \u092e\u0947\u0902 \u092c\u0926\u0932\u0947\u0902",
+        "\u092f\u0939\u093e\u0901 \u0938\u0947 \u0928\u0908 \u0926\u093f\u0932\u094d\u0932\u0940 \u092e\u0947\u0902 \u0938\u092e\u092f \u0915\u093e \u0905\u0902\u0924\u0930 \u0915\u094d\u092f\u093e \u0939\u0948",
+        "\u091c\u092c \u092f\u0939\u093e\u0901 \u0930\u093e\u0924 \u0915\u0947 \u0926\u0938 \u092c\u091c \u0930\u0939\u0947 \u0939\u0948\u0902 \u0924\u094b \u092e\u0941\u0902\u092c\u0908 \u092e\u0947\u0902 \u0915\u094d\u092f\u093e \u0938\u092e\u092f \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 38,
+      "train_count": 131,
+      "sample_queries": [
+        "\u092c\u093e\u0930\u0939 \u0915\u094d\u092f\u093e \u091a\u093e\u0930 \u0938\u0947 \u0935\u093f\u092d\u093e\u091c\u093f\u0924 \u0939\u0948",
+        "teees guna bavan ky hai",
+        "ek hazaar ko gunaa karo barah se"
+      ]
+    },
+    {
+      "class_id": 39,
+      "train_count": 209,
+      "sample_queries": [
+        "kripaya rasoeeghar ki battiyaan band kar den",
+        "\u0911\u0932\u0940 \u0936\u0941\u092d \u0930\u093e\u0924\u094d\u0930\u093f \u092c\u0924\u094d\u0924\u093f\u092f\u093e\u0902 \u092c\u0902\u0926",
+        "\u0915\u0943\u092a\u092f\u093e \u0932\u093e\u0907\u091f \u092c\u0902\u0926 \u0915\u0930\u0928\u093e"
+      ]
+    },
+    {
+      "class_id": 40,
+      "train_count": 85,
+      "sample_queries": [
+        "\u092e\u093e\u0938\u094d\u091f\u0930 \u092c\u0947\u0921\u0930\u0942\u092e \u0915\u0947 \u0926\u094b\u0928\u094b\u0902 \u0932\u0948\u0902\u092a \u0911\u0928 \u0915\u0930 \u0926\u094b",
+        "garage light chalu karo gadi park karni hai",
+        "\u0918\u0930 \u0915\u0940 \u0938\u092d\u0940 \u0932\u093e\u0907\u091f\u0947\u0902 \u090f\u0915 \u0938\u093e\u0925 \u091a\u093e\u0932\u0942 \u0915\u0930\u0947\u0902"
+      ]
+    },
+    {
+      "class_id": 41,
+      "train_count": 333,
+      "sample_queries": [
+        "\u0930\u0947\u0932\u0917\u093e\u0921\u093c\u0940 \u091f\u093f\u0915\u091f \u0915\u0947 \u0932\u093f\u090f \u0915\u093f\u0924\u0928\u093e",
+        "\u091f\u094d\u0930\u0947\u0928 \u091f\u093e\u0907\u092e \u092c\u0924\u093e\u0913",
+        "\u0935\u0939\u093e\u0901 \u091c\u093e\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0930\u0947\u0932\u0917\u093e\u0921\u093c\u0940 \u0915\u093e \u0938\u092e\u092f \u0915\u093f\u0924\u0928\u093e \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 42,
+      "train_count": 158,
+      "sample_queries": [
+        "\u0930\u093e\u092f \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0915\u0930\u094b",
+        "kripaya git ke sheershak main achchhee dhun ka not lagaaen",
+        "\u092f\u0939 \u0905\u092c \u0924\u0915 \u0915\u093e \u0938\u092c\u0938\u0947 \u0905\u091a\u094d\u091b\u093e \u092c\u0948\u0902\u0921 \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 43,
+      "train_count": 668,
+      "sample_queries": [
+        "\u092a\u093f\u091b\u0932\u0947 \u0938\u092a\u094d\u0924\u093e\u0939 \u092e\u0947\u0902 \u092e\u0941\u091d\u0947 \u0938\u092d\u0940 \u0908\u092e\u0947\u0932 \u0915\u0947 \u0935\u093f\u0937\u092f\u094b\u0902 \u0914\u0930 \u092a\u094d\u0930\u0947\u0937\u0915\u094b\u0902 \u0915\u0940 \u0938\u0942\u091a\u0940 \u092c\u0928\u093e\u090f\u0902",
+        "\u0928\u092e\u0938\u094d\u0924\u0947 \u0915\u094d\u092f\u093e \u092e\u0947\u0930\u093e \u0907\u0928\u092c\u0949\u0915\u094d\u0938 \u092c\u0922\u093c \u0917\u092f\u093e \u0939\u0948",
+        "kripaya mere nae mel parhen"
+      ]
+    },
+    {
+      "class_id": 44,
+      "train_count": 1009,
+      "sample_queries": [
+        "\u0915\u0943\u092a\u092f\u093e \u0905\u0930\u093f\u091c\u093f\u0924 \u0938\u093f\u0902\u0939 \u0915\u0947 \u0926\u094d\u0935\u093e\u0930\u093e \u0924\u0941\u092e \u0939\u0940 \u0939\u094b \u091a\u093e\u0932\u0942 \u0915\u0930\u094b",
+        "sangit bajae",
+        "\u0936\u093e\u0938\u094d\u0924\u094d\u0930\u0940\u092f \u0915\u0915\u094d\u0937 \u0938\u0902\u0917\u0940\u0924 \u092a\u094d\u0932\u0947\u0932\u093f\u0938\u094d\u091f \u091a\u0932\u093e\u090f\u0902"
+      ]
+    },
+    {
+      "class_id": 45,
+      "train_count": 162,
+      "sample_queries": [
+        "\u0906\u0927\u093e \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0915\u092e \u092e\u093e\u0924\u094d\u0930\u093e",
+        "baat na karo",
+        "aaj mat bolo"
+      ]
+    },
+    {
+      "class_id": 46,
+      "train_count": 419,
+      "sample_queries": [
+        "\u0907\u0938\u0947 \u092e\u0947\u0930\u0947 \u092b\u0947\u0938\u092c\u0941\u0915 \u092a\u0930 \u092a\u094b\u0938\u094d\u091f \u0915\u0930\u0947\u0902 \u090f\u0932 \u0913 \u090f\u0932",
+        "\u0907\u0938 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902 sony \u091f\u0940.\u0935\u0940 \u0915\u094b \u0936\u093f\u0915\u093e\u092f\u0924 \u092d\u0947\u091c\u0947\u0902 \u091c\u093f\u0938\u0928\u0947 \u0915\u093e\u092e \u0915\u0930\u0928\u093e \u091b\u094b\u0921\u093c \u0926\u093f\u092f\u093e",
+        "phesbuk laen or desh amereeka ko janmadin ki shubhakaamnaen den"
+      ]
+    },
+    {
+      "class_id": 47,
+      "train_count": 805,
+      "sample_queries": [
+        "\u092d\u093e\u0930\u0924 \u0915\u0940 \u0930\u093e\u091c\u0927\u093e\u0928\u0940 \u0915\u094d\u092f\u093e \u0939\u0948",
+        "\u0938\u092c\u0938\u0947 \u0905\u0927\u093f\u0915 \u091c\u0928\u0938\u0902\u0916\u094d\u092f\u093e \u0935\u093e\u0932\u093e \u0926\u0947\u0936 \u0915\u094c\u0928 \u0938\u093e \u0939\u0948",
+        "\u091c\u093f\u0930\u093e\u092b \u0915\u093f\u0924\u0928\u093e \u0932\u0902\u092c\u093e \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 48,
+      "train_count": 1224,
+      "sample_queries": [
+        "\u0915\u0932 \u0917\u094d\u092f\u093e\u0930\u0939 \u0910. \u090f\u092e. \u092a\u0930 \u092e\u0941\u091d\u0947 \u0905\u092a\u0928\u0940 \u0924\u0940\u0928 \u092a\u0940. \u090f\u092e. \u0915\u0940 \u092c\u0948\u0920\u0915 \u092f\u093e\u0926 \u0926\u093f\u0932\u093e\u0928\u093e",
+        "\u092e\u0941\u091d\u0947 \u0915\u0932 \u0938\u093e\u0924 \u092c\u091c\u0947 \u0915\u093e\u0930\u094d\u092f\u093e\u0932\u092f \u0915\u0940 \u092c\u0948\u0920\u0915 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902 \u092f\u093e\u0926 \u0926\u093f\u0932\u093e\u0928\u093e",
+        "mjhe shukravaar ko ephaesyu mein mere jeev vijnyan pareekshan ke bare mein yaad dilaen"
+      ]
+    },
+    {
+      "class_id": 49,
+      "train_count": 118,
+      "sample_queries": [
+        "set kie gae sabhee alaarm ko anset karein",
+        "\u0915\u0943\u092a\u092f\u093e \u0907\u0938 \u0905\u0932\u093e\u0930\u094d\u092e \u0915\u094b \u0939\u091f\u093e \u0926\u0947\u0902",
+        "\u092e\u0947\u0930\u093e \u0915\u093e\u092e \u0905\u0932\u093e\u0930\u094d\u092e \u0939\u091f\u093e\u0913"
+      ]
+    },
+    {
+      "class_id": 50,
+      "train_count": 247,
+      "sample_queries": [
+        "mai pichhle mahine ki shoping list dilit karna chaahtaa hoon",
+        "\u0906\u0907\u091f\u092e \u0928\u0902\u092c\u0930 \u0924\u0940\u0928 \u0915\u094b \u0939\u091f\u093e \u0926\u094b",
+        "\u092e\u0948\u0902 \u092a\u093f\u091b\u0932\u0947 \u092e\u0939\u0940\u0928\u0947 \u0915\u0940 \u0936\u0949\u092a\u093f\u0902\u0917 \u0932\u093f\u0938\u094d\u091f \u0921\u093f\u0932\u0940\u091f \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0901"
+      ]
+    },
+    {
+      "class_id": 51,
+      "train_count": 151,
+      "sample_queries": [
+        "\u092e\u0941\u091d\u0947 \u0905\u092d\u0940 \u0932\u0947\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f taxi \u092c\u0941\u0932\u093e\u0913",
+        "olly \u0938\u092c\u0938\u0947 \u0928\u091c\u0926\u0940\u0915\u0940 \u090a\u092c\u0930 \u0916\u094b\u091c\u094b",
+        "\u0938\u094d\u0925\u093e\u0928\u0940\u092f cab \u092c\u0942\u0915 \u0915\u0930\u094b"
+      ]
+    },
+    {
+      "class_id": 52,
+      "train_count": 105,
+      "sample_queries": [
+        "is saptah kaun see philmen chal rahi hai",
+        "\u092a\u094d\u0930\u0936\u093f\u0915\u094d\u0937\u0923 \u0926\u093f\u0935\u0938",
+        "\u0905\u091a\u094d\u091b\u0940 \u0938\u092e\u0940\u0915\u094d\u0937\u093e \u0935\u093e\u0932\u0940 \u092b\u093f\u0932\u094d\u092e\u0947\u0902"
+      ]
+    },
+    {
+      "class_id": 53,
+      "train_count": 221,
+      "sample_queries": [
+        "yah geet vartaman mein kis shailee mein chal raha hai",
+        "abhee rediyo par kya chal raha h",
+        "jubin nautiyal"
+      ]
+    },
+    {
+      "class_id": 54,
+      "train_count": 315,
+      "sample_queries": [
+        "\u0913\u0932\u0940 \u0906\u091c \u0915\u0940 \u092e\u0947\u0930\u0940 \u0906\u091c \u0915\u0947 \u0915\u093e\u092e \u0915\u0940 \u0938\u0942\u091a\u0940 \u092e\u0947\u0902 \u0915\u094d\u092f\u093e \u0939\u0948",
+        "mere dvara banaai antim paanch soochiyaan kia hai",
+        "\u0915\u094d\u092f\u093e \u0906\u091c \u092e\u0947\u0930\u0940 \u0938\u0942\u091a\u0940 \u092e\u0947\u0902 \u0915\u0941\u091b \u0939\u0948"
+      ]
+    },
+    {
+      "class_id": 55,
+      "train_count": 249,
+      "sample_queries": [
+        "\u0915\u0943\u092a\u092f\u093e \u0905\u0917\u0932\u0947 \u0936\u0928\u093f\u0935\u093e\u0930 \u0938\u0941\u092c\u0939 \u0906\u0920 \u092c\u091c\u0947 \u091c\u093e\u0917\u094b \u0905\u0932\u093e\u0930\u094d\u092e \u092c\u091c\u093e\u090f\u0902",
+        "\u0913\u0932\u0940 \u092e\u0941\u091d\u0947 \u0905\u092d\u0940 \u0925\u094b\u0921\u093c\u0940 \u0915\u0949\u092b\u0940 \u091a\u093e\u0939\u093f\u090f",
+        "\u092e\u0947\u0930\u093e \u0938\u092c\u0938\u0947 \u091c\u094d\u092f\u093e\u0926\u093e \u0916\u0947\u0932\u093e \u091c\u093e\u0928\u0947 \u0935\u093e\u0932\u093e \u092a\u0949\u0921\u0915\u093e\u0938\u094d\u091f \u0915\u094c\u0928 \u0938\u093e \u0939\u0948"
+      ]
+    }
+  ],
+  "submission_checksum": "87dcc95f347c50ea28c300bf18527a5e0224aa65e65ba188e0231e962fe5d9e2"
+}

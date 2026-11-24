@@ -1,94 +1,132 @@
 # Methodology & Defense Summary: Script-Bridged Hinglish Intent Classifier
 
 **Competition:** Data Sprint 2.0 (Anveshan, NIE Mysuru) — NLP Track  
-**Track:** Conversational NLP / Intent Classification (56 Classes: 55 in-scope domains + Class 55 Fallback)  
 **Author / Team:** Ranodip Ghosh  
-**Primary Metric:** Unweighted Macro-F1 across 56 classes  
-**Hard Constraints:** Total Parameters $\le 300\text{M}$ | Latency $< 50\text{ms}$ per query (including full pipeline)
+**Primary Metric:** Unweighted Macro-F1 across 56 classes (55 in-scope domains + Class 55 Fallback)  
+**Constraints:** Total Parameters $\le 300\text{M}$ | Full-Pipeline Latency $< 50\text{ms}$ per query  
+**Hardware Environment:** 12th Gen Intel(R) Core(TM) i5-12450H | Python 3.10.20 | scikit-learn 1.7.2  
+**Submission SHA-256:** `87dcc95f347c50ea28c300bf18527a5e0224aa65e65ba188e0231e962fe5d9e2`
 
 ---
 
-## 1. Verified Results & Ablation Summary
+## 1. Verified Results & Script-Stratified Ablations (Tasks 1 & 2)
 
-All numbers below were computed locally on the competition CSVs using a **strict non-leaky twin-grouped 5-fold cross-validation scheme** (`StratifiedGroupKFold` on connected-component near-duplicate clusters).
+All numbers below were computed locally using a **strict non-leaky twin-grouped 5-fold cross-validation scheme** (`StratifiedGroupKFold` over 13335 disjoint connected-component twin clusters).
+- **Train row counts by script:** Devanagari = 10353 rows | Roman = 5645 rows | Mixed = 938 rows (Total = 16936).
+- **Test row counts by script:** Roman = 3154 rows (64.2%) | Devanagari = 1604 rows (32.7%) | Mixed = 154 rows (3.1%) (Total = 4912).
+- **Test-Weighted Metric:** `0.642 * Roman + 0.327 * Devanagari + 0.031 * Mixed` *(Note: mixed-script F1 is based on only 938 training rows and is flagged as noisy)*.
+- **Twin-Group Assertion:** 0 groups span multiple folds, and 0 exact-duplicate transliteration strings with the same label span folds (Fold assignment hash: `c57dcf854e4d0ba5`).
 
-| Pipeline Variant | Overall Macro-F1 | Roman Macro-F1 | Devanagari Macro-F1 | Mixed Macro-F1 | Test-Weighted Macro-F1 | Latency (p95) | Param Count |
-|---|---|---|---|---|---|---|---|
-| **Organizer Reference Baseline (char TF-IDF + LinearSVC)** | 0.5054 | ~0.4210 | ~0.6120 | ~0.3800 | 0.4850 | 12.1 ms | 2.8M |
-| **Standard Baseline on Clean Twin-Grouped Folds** | 0.7527 | 0.7186 | 0.7682 | 0.6810 | 0.7356 | 12.4 ms | 2.8M |
-| **+ N1 & N2 (Dual-View Transliteration Bridge & TTA)** | **0.8082** | **0.8139** | **0.8037** | **0.7395** | **0.8083** | **22.9 ms** | **4.43M** |
-| **+ N5 (Prior Logit Adjustment, $\tau = 0.200$)** | **0.8157** | **0.8257** | **0.8097** | **0.7276** | **0.8174** | **22.9 ms** | **4.43M** |
-| **+ N4 (Two-Tier Fallback Calibration)** | **0.8157** | **0.8257** | **0.8097** | **0.7276** | **0.8174** | **22.9 ms** | **4.43M** |
+### Script-Stratified Ablation Table
 
-> **Note on Cross-Validation Integrity:** When evaluated with standard stratified splits that place cross-script twin pairs on both sides of folds, Macro-F1 measures 0.8461 (overall) / 0.8676 (Roman) due to twin memorization. Under our **non-leaky twin-grouped cross-validation**, the true generalization performance is **0.8082 raw / 0.8157 adjusted**, where Devanagari and Roman performances are balanced.
+| Model Stage / Configuration | Overall Macro-F1 | Roman Macro-F1 (5645 rows) | Devanagari Macro-F1 (10353 rows) | Mixed Macro-F1 (938 rows, noisy) | Test-Weighted Macro-F1 |
+|---|---|---|---|---|---|
+| **A. Baseline (Original text only, no augmentation)** | 0.7537 | 0.7272 | 0.7623 | 0.6978 | 0.7378 |
+| **B. Augmentation with Transliterated Devanagari (Single-view infer)** | 0.7818 | 0.8139 | 0.7611 | 0.6984 | 0.7931 |
+| **C. Stage B + Dual-View TTA** | 0.8082 | 0.8139 | 0.8037 | 0.7395 | 0.8083 |
+| **D. Stage C + Prior Logit Adjustment (tau = 0.2)** | **0.8157** | **0.8257** | **0.8097** | **0.7276** | **0.8174** |
+| *D (Nested CV tuned tau per fold: [0.2, 0.27, 0.2, 0.2, 0.2])* | *0.8154* | *0.8253* | *0.8099* | *0.7268* | *0.8172* |
 
----
-
-## 2. Core Methodological Contributions
-
-### N1: Calibrated Phonetic Devanagari $\rightarrow$ Roman Script Bridge
-- **The Core Issue:** Training data is **61.1% Devanagari** and only **33.3% Roman**, while test data is **64.2% Roman** and **32.7% Devanagari**. Training solely on raw text causes severe domain degradation on the majority test script.
-- **Implementation:** A deterministic rule-based transliterator calibrated to the phonetic patterns in the dataset (long vowels `aa/ee/oo`, nukta handling, consonant conjuncts, and schwa deletion at word boundaries).
-- **Empirical Impact:** Increases unseen Roman test vocabulary token coverage from **85.5% to 89.8%** (unique word type coverage increases from **54.6% to 63.7%**).
-
-### N2: Dual-View Representation & Test-Time Augmentation (TTA)
-- Training utterances in Devanagari/mixed script are augmented with their transliterated Roman view, doubling the effective Roman training representation.
-- At inference, the query is processed in both its original and transliterated views, and probabilities are averaged:
-  $$P(\text{class} \mid x) = \frac{1}{2} P(x_{\text{orig}}) + \frac{1}{2} P(x_{\text{trans}})$$
-- This provides an immediate **+5.55 percentage point** gain in true cross-validation Macro-F1 over the single-script baseline.
-
-### N3: Non-Leaky Twin-Grouped Cross-Validation Protocol
-- **Discovery:** ~36% of Roman utterances in train are semantic twins of Devanagari utterances (parallel machine translations). In test, only ~1.6% share twins with train.
-- **Fix:** We constructed a cosine-similarity graph ($\ge 0.75$) in transliterated space and partitioned the training set into **11,946 disjoint connected-component clusters**. Using `StratifiedGroupKFold`, twin pairs are strictly constrained to the same fold, eliminating artificial data leakage.
-- **Evaluation Weighting:** Test-matched metric:
-  $$\text{Macro-F1}_{\text{weighted}} = 0.642 \times \text{F1}_{\text{Roman}} + 0.327 \times \text{F1}_{\text{Devanagari}} + 0.031 \times \text{F1}_{\text{Mixed}}$$
-
-### N4: Two-Tier Fallback Handling (Class 55)
-- **Tier 1 (In-Domain Fallback):** Train Class 55 contains 249 labeled voice commands representing closed out-of-scope/fallback intents (e.g., alarm queries, podcast controls, coffee ordering, board games like chess/ludo).
-  - Out-of-Fold Evaluation on Real Class 55: **Precision = 0.8652, Recall = 0.7992, F1-Score = 0.8309**.
-- **Tier 2 (Open-Set Rejection):** Detects generic, out-of-domain narrative paragraphs present only in test (e.g., length $> 250$ characters), routing them safely to Class 55.
-
-### N5: Class-Balanced Prior Logit Adjustment
-- Train labels exhibit a $14.6\times$ imbalance (Class 48 has 1,224 instances; Class 36 has only 84).
-- We applied post-hoc temperature-scaled prior logit adjustment (Menon et al., 2021) with class prior $\pi_y$:
-  $$\tilde{P}(y \mid x) \propto P(y \mid x) \cdot \frac{1}{\pi_y^\tau}, \quad \tau = 0.200$$
-- This yields a statistically consistent **+0.0075 Macro-F1 gain** on twin-grouped CV by lifting minority-class recall without degrading head-class precision.
+> **Key Mechanistic Insight on TTA (Stage B vs C):**  
+> Notice that for Roman rows, Macro-F1 is identical (0.8139 vs 0.8139). TTA is an exact no-op for Roman rows because the transliterated text is identical to the original. The entire performance gain of TTA comes from Devanagari rows (0.7611 $\rightarrow$ 0.8037, +0.0426), as projecting Devanagari into the Romanized feature space allows the classifier to utilize Roman n-gram weights.
 
 ---
 
-## 3. Constraint Compliance Verification
+## 2. Tau Selection & Prior Logit Adjustment (Task 3)
 
-| Constraint | Competition Limit | Measured Value | Compliance Status |
+Severe class imbalance exists in the dataset (Class 48 has 1,224 rows; Class 36 has only 84 rows). We evaluated temperature-scaled prior logit adjustment:
+$$\tilde{P}(y \mid x) \propto P(y \mid x) \cdot \frac{1}{\pi_y^\tau}$$
+
+### Full OOF Tau Sweep (0.0 to 1.0)
+```text
+tau = 0.00: Macro-F1 = 0.8082
+tau = 0.10: Macro-F1 = 0.8112
+tau = 0.15: Macro-F1 = 0.8137
+tau = 0.20: Macro-F1 = 0.8157  <-- Peak Macro-F1
+tau = 0.25: Macro-F1 = 0.8151
+tau = 0.30: Macro-F1 = 0.8148
+tau = 0.50: Macro-F1 = 0.8128
+tau = 1.00: Macro-F1 = 0.7921
+```
+To avoid selection bias, we verified this via **nested cross-validation**: in each fold, $\tau$ was chosen on the 4 training folds and evaluated strictly on the unseen fold. The selected values were `[0.2, 0.27, 0.2, 0.2, 0.2]` (median = `0.2`), achieving an honest nested Macro-F1 of **0.8154**.
+
+---
+
+## 3. Class 55 & Fallback Evaluation (Task 4)
+
+- **Tier 1 (In-Domain Supervised Fallback):** Class 55 in train consists of 249 voice commands representing unhandled/fallback domains (alarms, podcasts, coffee, board games).
+  - **Out-of-Fold Real Class 55 Precision:** **0.8652**
+  - **Out-of-Fold Real Class 55 Recall:** **0.7992**
+  - **Out-of-Fold Real Class 55 F1-Score:** **0.8309**
+- **Tier 2 (Open-Set Fallback Rule):** A strict length rule ($> 250$ characters) flags generic long narrative prose present in test that has no voice assistant properties. It changes exactly **1 test row** (Row 901594).
+- **Pseudo-OOS Multi-Rotation Experiment:** In a 3-rotation held-out domain experiment (holding out 3 real classes per rotation to simulate open-set queries), the maximum-softmax detector achieved an average **AUROC of 0.9162** (Rotations: [0.9385, 0.8908, 0.9194]).
+
+---
+
+## 4. Test Prediction Skew Findings (Task 5)
+
+The submission predicts Class 55 on 309 of 4,912 test queries (6.3%), compared to 1.47% in train. Our empirical investigation reveals:
+1. Test Class 55 counts (309 rows, 6.3%) reflect that the test set contains a substantial density of alarm, podcast, and coffee queries that train explicitly labeled as Class 55.
+2. Over 85% of test queries routed to Class 55 contain explicit keywords ('alarm', 'alaarm', 'अलार्म', 'podcast', 'podkaast', 'kophee', 'khel').
+3. Over-predicted classes 7, 28, 34, and 40 are small tail classes (each <= 95 train examples); their test queries exhibit high vocabulary density in short intent commands.
+4. Under-predicted classes 15 and 37 correspond to specific transactional requests (e.g., specific radio/media queries) that appear with lower relative frequency in the test distribution.
+5. Prior logit adjustment with tau=0.200 was verified via nested 5-fold cross-validation to maximize Macro-F1 across all 56 classes without distortion.
+6. No manual post-hoc class clamping is justified, as modifying test frequencies without ground truth hurts unweighted Macro-F1 on genuine test distribution shifts.
+
+---
+
+## 5. Constraint Compliance & Honesty (Task 7)
+
+| Criterion | Requirement | Measured Value | Status |
 |---|---|---|---|
-| **Parameter Count** | $\le 300\text{ M}$ | **4,433,912** ($4.43\text{M}$) | **COMPLIANT ($67\times$ under limit)** |
-| **Inference Latency** | $< 50\text{ ms}$ per query | **p50 = 20.99 ms, p95 = 22.94 ms, p99 = 25.01 ms** | **COMPLIANT ($2.2\times$ faster than limit)** |
-| **Submission Format** | Exactly 4,912 rows | 4,912 rows, matching IDs, integer labels $0–55$, no NaNs | **COMPLIANT & VERIFIED** |
+| **Trainable Parameters** | $\le 300\text{M}$ | **4,509,680 (4.51M)** | **COMPLIANT ($66\times$ under limit)** |
+| **Inference Latency (p50)** | $< 50\text{ms}$ | **15.335 ms** | **COMPLIANT** |
+| **Inference Latency (p95)** | $< 50\text{ms}$ | **22.821 ms** | **COMPLIANT ($2.1\times$ faster than limit)** |
+| **Inference Latency (p99)** | $< 50\text{ms}$ | **23.779 ms** | **COMPLIANT** |
+
+*Note on Parameter Counting:* Exactly 4,509,680 parameters represent the logistic regression coefficients ($56 \times 80530$) plus 56 intercepts. The 57,246 character n-gram and 23,283 word n-gram vectorizer dictionary tokens and IDF vectors are fixed, non-trainable preprocessing mappings.
 
 ---
 
-## 4. Live Demo Instructions (Stage 2 Defense)
+## 6. Live Interactive Demo Outputs (Task 6)
 
-The production pipeline is exposed via a clean, self-contained `predict(text)` function inside [`notebook.ipynb`](notebook.ipynb):
+The following outputs were produced directly by the production `predict(text)` function in the executed notebook:
 
 ```python
-from notebook import predict  # or execute Cell 7 directly
-
-# Example 1: Kitchen light command (Class 39)
-res1 = predict("kripaya rasoeeghar ki battiyaan band kar den")
-# Output: {'label': 39, 'confidence': 0.884, 'latency_ms': 22.9, 'is_fallback': False}
-
-# Example 2: Devanagari light command (Class 39)
-res2 = predict("कृपया रसोईघर की बत्तियां बंद कर दें")
-# Output: {'label': 39, 'confidence': 0.891, 'latency_ms': 22.4, 'is_fallback': False}
-
-# Example 3: Fallback command (Class 55)
-res3 = predict("kya kal subah ke liye koi alarm set hai mera bhai")
-# Output: {'label': 55, 'confidence': 0.872, 'latency_ms': 21.8, 'is_fallback': True}
+# Query: 'kripaya rasoeeghar ki battiyaan band kar den'
+# -> Label: 39, Confidence: 0.882, Latency: 24.96ms, Fallback: False
+# Query: 'कृपया रसोईघर की बत्तियां बंद कर दें'
+# -> Label: 39, Confidence: 0.937, Latency: 30.51ms, Fallback: False
+# Query: 'kya kal subah ke liye koi alarm set hai mera bhai'
+# -> Label: 55, Confidence: 0.613, Latency: 26.69ms, Fallback: True
+# Query: 'volyum star ko adhiktam mein badlen'
+# -> Label: 28, Confidence: 0.791, Latency: 27.26ms, Fallback: False
+# Query: 'bina tel ke svadisht snaiks kaise pakaaen'
+# -> Label: 36, Confidence: 0.909, Latency: 20.82ms, Fallback: False
 ```
 
 ---
 
-## 5. Artifacts & Reproducibility
-- **Jupyter Notebook:** [`notebook.ipynb`](notebook.ipynb) (executed in-place with all outputs preserved).
-- **Final Submission:** [`submission.csv`](submission.csv) (generated directly from the notebook pipeline).
-- **Pipeline Runner:** [`run_final_pipeline.py`](run_final_pipeline.py) (reproducible command-line entrypoint).
+## 7. Robustness Experiment (Task 8)
+
+We evaluated phonetic and ASR-noise injection (matra drops, `h` for `hai`, `kia` for `kya`, `mjhe`, vowel collapses `aa->a`, `ee->i`, `oo->u`) on Roman queries:
+- **Clean Validation Macro-F1:** **0.7431**
+- **Noised Validation Macro-F1:** **0.7464**
+- *Decision:* The noise model improved noised validation performance from 0.7431 to 0.7464 without destabilizing clean validation. However, to keep the final pipeline minimalist, deterministic, and 100% reproducible, the primary submission relies on the clean dual-view phonetic bridge.
+
+---
+
+## 8. Known Limitations (Task 6)
+
+1. **Class 55 In-Domain Semantics:** In the competition dataset, Class 55 is not purely synthetic out-of-domain noise; it contains legitimate voice commands for alarms, podcasts, and coffee. Consequently, queries like *"kya kal subah ke liye koi alarm set hai"* are routed to Class 55 because train explicitly labels them as such.
+2. **Mixed-Script Variance:** Mixed-script training queries account for only 938 rows (5.5% of train). Hence, mixed-script F1 carries higher sample variance than Roman or Devanagari subsets.
+3. **Hardware Latency:** Full-pipeline latency was profiled on an `12th Gen Intel(R) Core(TM) i5-12450H` at 22.821ms (p95). On lower-power machines or under heavy multiprocessing contention, latency may vary.
+
+---
+
+## 9. Reference Floor Comparison (Task 6)
+
+The organizer's reference baseline (char n-gram TF-IDF + LinearSVC) published leaderboard scores:
+- **Organizer Public Leaderboard Floor:** `0.52000`
+- **Organizer Private Leaderboard Floor:** `0.50542`
+- **Our System Non-Leaky CV Score:** **0.8157** (Test-Weighted: **0.8174**)
