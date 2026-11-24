@@ -47,7 +47,7 @@ print("Environment specs:", sys_specs)
 # Transliteration
 VOWELS = {'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ऋ': 'ri', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au', 'ऑ': 'o', 'ऍ': 'e'}
 MATRAS = {'ा': 'aa', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'ृ': 'ri', 'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', 'ॉ': 'o', 'ॅ': 'e'}
-CONSONANTS = {'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ng', 'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'ny', 'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n', 'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n', 'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm', 'य': 'y', 'r': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's', 'ह': 'h', 'क़': 'q', 'ख़': 'kh', 'ग़': 'gh', 'ज़': 'z', 'ड़': 'd', 'ढ़': 'dh', 'फ़': 'f'}
+CONSONANTS = {'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ng', 'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'ny', 'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n', 'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n', 'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm', 'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's', 'ह': 'h', 'क़': 'q', 'ख़': 'kh', 'ग़': 'gh', 'ज़': 'z', 'ड़': 'd', 'ढ़': 'dh', 'फ़': 'f'}
 HALANT = '्'; ANUSVARA = 'ं'; CHANDRABINDU = 'ँ'; VISARGA = 'ः'; NUKTA = '़'
 
 def devanagari_to_roman(text):
@@ -235,58 +235,193 @@ print("\nAblation A (Baseline):", metrics_A)
 print("Ablation B (Augmentation, Single-view infer):", metrics_B)
 print("Ablation C (Augmentation + Dual-view TTA):", metrics_C)
 
-# --- TASK 3: TAU SELECTION (NESTED CV & FULL SWEEP) ---
-print("\n--- TASK 3: Tau Selection ---")
-class_counts = train_df['target'].value_counts().sort_index().values
+# --- TASK 3: TAU SELECTION (GENUINELY NESTED CV) ---
+print("\n--- TASK 3: Genuinely Nested Tau Selection ---")
+
+# Full-data prior is retained for final production inference.
+class_counts = train_df['target'].value_counts().reindex(range(56), fill_value=0).values
 prior = class_counts / len(train_df)
 
+# Exploratory only: this sweep uses all OOF labels and is not an
+# independent estimate of generalization performance.
 tau_sweep = {}
 for tau_val in np.linspace(0.0, 1.0, 21):
     tau_r = round(float(tau_val), 3)
     p_adj = oof_C * (1.0 / (prior ** tau_r))
-    score = f1_score(train_df['target'], np.argmax(p_adj, axis=1), average='macro')
+    score = f1_score(
+        train_df['target'],
+        np.argmax(p_adj, axis=1),
+        average='macro'
+    )
     tau_sweep[tau_r] = float(round(score, 4))
 
-print("Full OOF Tau Sweep (0 to 1):", tau_sweep)
+print("Exploratory full-OOF Tau Sweep (not independent):", tau_sweep)
 
-# Nested CV selection: for each fold, select best tau on other 4 folds, evaluate on held-out fold
+# Genuine nested validation:
+# For each outer fold, generate fresh inner OOF predictions using
+# models that never train on the outer validation fold.
 nested_best_taus = []
 oof_D_nested = np.zeros((len(train_df), 56))
 
 for val_fold in range(5):
-    trn_mask = (train_df['fold'] != val_fold).values
-    val_mask = (train_df['fold'] == val_fold).values
-    
-    y_trn = train_df.loc[trn_mask, 'target'].values
-    probs_trn = oof_C[trn_mask]
-    
+    print(f"\nNested validation: outer fold {val_fold}")
+
+    outer_train_mask = (train_df['fold'] != val_fold).values
+    outer_val_mask = (train_df['fold'] == val_fold).values
+
+    outer_train = train_df.loc[outer_train_mask]
+    outer_val_idx = train_df.index[outer_val_mask].to_numpy()
+
+    y_outer_train = outer_train['target'].values
+    outer_counts = (
+        outer_train['target']
+        .value_counts()
+        .reindex(range(56), fill_value=0)
+        .values
+    )
+
+    if np.any(outer_counts == 0):
+        raise ValueError(
+            f"Class absent from outer training data for fold {val_fold}"
+        )
+
+    prior_outer = outer_counts / len(outer_train)
+
+    # Store inner validation predictions at their original row indices.
+    inner_oof = np.zeros((len(train_df), 56))
+
+    for inner_fold in range(5):
+        if inner_fold == val_fold:
+            continue
+
+        inner_train = train_df[
+            (train_df['fold'] != val_fold) &
+            (train_df['fold'] != inner_fold)
+        ]
+
+        inner_val = train_df[train_df['fold'] == inner_fold]
+
+        aug_rows = inner_train[
+            inner_train['script'].isin(['devanagari', 'mixed'])
+        ].copy()
+        aug_rows['query_text'] = aug_rows['trans']
+        inner_train_aug = pd.concat(
+            [inner_train, aug_rows],
+            ignore_index=True
+        )
+
+        vec_c_inner = TfidfVectorizer(
+            analyzer='char_wb',
+            ngram_range=(2, 5),
+            min_df=2,
+            sublinear_tf=True
+        )
+        vec_w_inner = TfidfVectorizer(
+            analyzer='word',
+            ngram_range=(1, 2),
+            min_df=2,
+            sublinear_tf=True
+        )
+
+        X_inner_train = hstack([
+            vec_c_inner.fit_transform(inner_train_aug['query_text']),
+            vec_w_inner.fit_transform(inner_train_aug['query_text'])
+        ])
+
+        clf_inner = LogisticRegression(
+            C=6.0,
+            max_iter=1000,
+            random_state=SEED
+        )
+        clf_inner.fit(X_inner_train, inner_train_aug['target'])
+
+        X_inner_orig = hstack([
+            vec_c_inner.transform(inner_val['query_text']),
+            vec_w_inner.transform(inner_val['query_text'])
+        ])
+        X_inner_trans = hstack([
+            vec_c_inner.transform(inner_val['trans']),
+            vec_w_inner.transform(inner_val['trans'])
+        ])
+
+        p_orig = clf_inner.predict_proba(X_inner_orig)
+        p_trans = clf_inner.predict_proba(X_inner_trans)
+        p_inner = 0.5 * p_orig + 0.5 * p_trans
+
+        # Explicitly align model probability columns to class IDs.
+        for col, cls in enumerate(clf_inner.classes_):
+            inner_oof[inner_val.index.to_numpy(), int(cls)] = p_inner[:, col]
+
+        print(
+            f"  Inner fold {inner_fold} complete "
+            f"({len(inner_train)} training rows, "
+            f"{len(inner_val)} validation rows)"
+        )
+
+    outer_train_idx = outer_train.index.to_numpy()
+    inner_probs = inner_oof[outer_train_idx]
+
+    if np.any(inner_probs.sum(axis=1) == 0):
+        raise ValueError(
+            f"Missing inner OOF predictions for outer fold {val_fold}"
+        )
+
     best_t = 0.0
     best_s = -1.0
+
     for t_cand in np.linspace(0.0, 0.5, 51):
-        adj_t = probs_trn * (1.0 / (prior ** t_cand))
-        sc = f1_score(y_trn, np.argmax(adj_t, axis=1), average='macro')
-        if sc > best_s:
-            best_s = sc
-            best_t = t_cand
-            
-    nested_best_taus.append(round(float(best_t), 3))
-    # Apply selected best_t to val fold
-    oof_D_nested[val_mask] = oof_C[val_mask] * (1.0 / (prior ** best_t))
+        adjusted = inner_probs * (1.0 / (prior_outer ** t_cand))
+        score = f1_score(
+            y_outer_train,
+            np.argmax(adjusted, axis=1),
+            average='macro'
+        )
+
+        if score > best_s:
+            best_s = score
+            best_t = float(t_cand)
+
+    nested_best_taus.append(round(best_t, 3))
+
+    # Outer predictions come from the original outer-fold model in oof_C.
+    # The outer prior and selected tau were determined without outer labels.
+    oof_D_nested[outer_val_idx] = (
+        oof_C[outer_val_idx] *
+        (1.0 / (prior_outer ** best_t))
+    )
+
+    print(
+        f"Outer fold {val_fold}: selected tau={best_t:.3f}, "
+        f"inner macro-F1={best_s:.4f}"
+    )
 
 chosen_tau = float(np.median(nested_best_taus))
-print(f"Nested CV per-fold selected taus: {nested_best_taus} | Median tau: {chosen_tau}")
+print(
+    f"\nGenuine nested fold taus: {nested_best_taus} | "
+    f"Median production tau: {chosen_tau:.3f}"
+)
 
+# Retain this full-data adjustment as a diagnostic, not an unbiased score.
 oof_D = oof_C * (1.0 / (prior ** chosen_tau))
-metrics_D = calc_metrics(train_df['target'].values, np.argmax(oof_D, axis=1), train_df['script'].values)
-metrics_D_nested = calc_metrics(train_df['target'].values, np.argmax(oof_D_nested, axis=1), train_df['script'].values)
 
-print("Ablation D (C + Prior Logit Adjustment fixed tau):", metrics_D)
-print("Ablation D Nested (C + Per-fold tuned tau):", metrics_D_nested)
+metrics_D = calc_metrics(
+    train_df['target'].values,
+    np.argmax(oof_D, axis=1),
+    train_df['script'].values
+)
+metrics_D_nested = calc_metrics(
+    train_df['target'].values,
+    np.argmax(oof_D_nested, axis=1),
+    train_df['script'].values
+)
+
+print("Ablation D (full-data prior; diagnostic only):", metrics_D)
+print("Ablation D Nested (outer-held-out evaluation):", metrics_D_nested)
 
 # --- TASK 4: CLASS 55 / OOS EVALUATION ---
 print("\n--- TASK 4: Class 55 & Fallback Evaluation ---")
 y_true_55 = (train_df['target'] == 55).values
-y_pred_55 = (np.argmax(oof_D, axis=1) == 55)
+y_pred_55 = (np.argmax(oof_D_nested, axis=1) == 55)
 
 c55_prec = float(precision_score(y_true_55, y_pred_55))
 c55_rec = float(recall_score(y_true_55, y_pred_55))
@@ -333,6 +468,7 @@ raw_final_preds = np.argmax(final_test_probs, axis=1)
 
 # Apply Tier-2 rule
 is_long_test = test_df['query_text'].apply(lambda x: len(x) > 250).values
+long_prose_ids = test_df.loc[is_long_test, 'example_id'].astype(int).tolist()
 final_preds = raw_final_preds.copy()
 final_preds[is_long_test] = 55
 
@@ -378,14 +514,38 @@ for c in range(56):
 over_classes = [7, 28, 34, 40, 55]
 under_classes = [15, 37]
 
-# 5 to 8 line findings
+# Findings are computed from the current predictions and training data.
+class55_test_count = int((final_preds == 55).sum())
+class55_test_pct = float(class55_test_count / len(test_df) * 100)
+
+class55_queries = test_df.loc[final_preds == 55, 'query_text'].fillna('').astype(str).str.lower()
+class55_keyword_terms = ['alarm', 'alaarm', 'podcast', 'podkaast', 'kophee', 'khel']
+class55_keyword_match_count = int(
+    class55_queries.apply(
+        lambda q: any(term in q for term in class55_keyword_terms)
+    ).sum()
+)
+class55_keyword_match_pct = (
+    float(class55_keyword_match_count / class55_test_count * 100)
+    if class55_test_count else 0.0
+)
+
+tail_class_counts = {
+    c: int((train_df['target'] == c).sum())
+    for c in [7, 28, 34, 40]
+}
+under_class_ratios = {
+    c: class_skew_report[c]['ratio']
+    for c in [15, 37]
+}
+
 skew_findings = [
-    "1. Test Class 55 counts (309 rows, 6.3%) reflect that the test set contains a substantial density of alarm, podcast, and coffee queries that train explicitly labeled as Class 55.",
-    "2. Over 85% of test queries routed to Class 55 contain explicit keywords ('alarm', 'alaarm', 'अलार्म', 'podcast', 'podkaast', 'kophee', 'khel').",
-    "3. Over-predicted classes 7, 28, 34, and 40 are small tail classes (each <= 95 train examples); their test queries exhibit high vocabulary density in short intent commands.",
-    "4. Under-predicted classes 15 and 37 correspond to specific transactional requests (e.g., specific radio/media queries) that appear with lower relative frequency in the test distribution.",
-    "5. Prior logit adjustment with tau=0.200 was verified via nested 5-fold cross-validation to maximize Macro-F1 across all 56 classes without distortion.",
-    "6. No manual post-hoc class clamping is justified, as modifying test frequencies without ground truth hurts unweighted Macro-F1 on genuine test distribution shifts."
+    f"1. Class 55 accounts for {class55_test_count} test predictions ({class55_test_pct:.2f}% of the test set).",
+    f"2. Among Class 55 predictions, {class55_keyword_match_count} ({class55_keyword_match_pct:.2f}%) contain at least one searched Latin-script term: {', '.join(class55_keyword_terms)}. This is a limited keyword check, not semantic classification.",
+    f"3. Training counts for classes 7, 28, 34, and 40 are {tail_class_counts}; predicted test frequencies should be interpreted alongside these class supports.",
+    f"4. Test-to-train frequency ratios for classes 15 and 37 are {under_class_ratios}; these describe prediction distributions, not verified test errors.",
+    f"5. Nested fold-selected tau values were {nested_best_taus}; their median was {chosen_tau:.3f}. This does not prove optimality on hidden test labels.",
+    "6. Test labels are unavailable, so prediction frequencies and keyword matches are descriptive diagnostics; they cannot establish test accuracy or justify post-hoc class-frequency correction."
 ]
 print("\nSkew Findings:")
 for f in skew_findings:
@@ -448,35 +608,65 @@ def predict(text: str) -> dict:
         'label': pred_label,
         'confidence': conf,
         'latency_ms': latency_ms,
-        'is_fallback': (pred_label == 55)
+        'is_fallback': False,
+        'reason': 'model_prediction'
     }
 
-# Warmup 20 runs
-for _ in range(20):
-    predict("kripaya batti band kar den")
-
-# Benchmark 600 queries across Roman, Devanagari, Mixed, Long prose
-bm_queries = [
-    "kripaya rasoeeghar ki battiyaan band kar den", # Roman
-    "कृपया रसोईघर की बत्तियां बंद कर दें",         # Devanagari
-    "volyum star ko adhiktam mein badlen",          # Roman
-    "alexa लिविंग रूम की लाइट्स बंद करो",            # Mixed
-    "kya kal subah ke liye koi alarm set hai",       # Roman (C55)
-    "A " * 150                                      # Long prose
+# Warm up the model before measuring latency.
+model_benchmark_queries = [
+    "kripaya rasoeeghar ki battiyaan band kar den",
+    "\u0915\u0943\u092a\u092f\u093e \u0930\u0938\u094b\u0908\u0918\u0930 \u0915\u0940 \u092c\u0924\u094d\u0924\u093f\u092f\u093e\u0902 \u092c\u0902\u0926 \u0915\u0930 \u0926\u0947\u0902",
+    "volyum star ko adhiktam mein badlen",
+    "alexa \u0932\u093f\u0935\u093f\u0902\u0917 \u0930\u0942\u092e \u0915\u0940 \u0932\u093e\u0907\u091f\u094d\u0938 \u092c\u0902\u0926 \u0915\u0930\u094b",
+    "kya kal subah ke liye koi alarm set hai"
 ]
 
-latencies = []
+long_prose_query = "A " * 150
+
+for _ in range(20):
+    for q in model_benchmark_queries:
+        predict(q)
+
+# Measure model-inference queries separately from fallback queries.
+model_latencies = []
+fallback_latencies = []
+
 for _ in range(100):
-    for q in bm_queries:
+    for q in model_benchmark_queries:
         res = predict(q)
-        latencies.append(res['latency_ms'])
+        if not res['is_fallback']:
+            model_latencies.append(res['latency_ms'])
 
-p50 = float(round(np.percentile(latencies, 50), 3))
-p95 = float(round(np.percentile(latencies, 95), 3))
-p99 = float(round(np.percentile(latencies, 99), 3))
-mean_lat = float(round(np.mean(latencies), 3))
+    fallback_result = predict(long_prose_query)
+    if fallback_result['is_fallback']:
+        fallback_latencies.append(fallback_result['latency_ms'])
 
-print(f"Latency Profile: p50={p50}ms, p95={p95}ms, p99={p99}ms, mean={mean_lat}ms")
+assert len(model_latencies) == 500, (
+    f"Expected 500 model latency samples, got {len(model_latencies)}"
+)
+assert len(fallback_latencies) == 100, (
+    f"Expected 100 fallback latency samples, got {len(fallback_latencies)}"
+)
+
+def latency_summary(values):
+    return {
+        "p50": float(round(np.percentile(values, 50), 3)),
+        "p95": float(round(np.percentile(values, 95), 3)),
+        "p99": float(round(np.percentile(values, 99), 3)),
+        "mean": float(round(np.mean(values), 3))
+    }
+
+model_latency_profile = latency_summary(model_latencies)
+fallback_latency_profile = latency_summary(fallback_latencies)
+
+# Keep the legacy profile key as the model-inference profile.
+p50 = model_latency_profile["p50"]
+p95 = model_latency_profile["p95"]
+p99 = model_latency_profile["p99"]
+mean_lat = model_latency_profile["mean"]
+
+print("Model inference latency:", model_latency_profile)
+print("Long-prose fallback latency:", fallback_latency_profile)
 
 # Exact parameter counting
 num_classes = clf_prod.coef_.shape[0]
@@ -607,6 +797,7 @@ final_results = {
         "recall": c55_rec,
         "f1": c55_f1,
         "test_long_prose_count": test_long_count,
+        "long_prose_example_ids": long_prose_ids,
         "pseudo_oos_auroc_scores": pseudo_auroc_scores,
         "mean_pseudo_oos_auroc": mean_pseudo_auroc
     },
@@ -620,12 +811,8 @@ final_results = {
         "total_parameters_m": float(round(trainable_params / 1e6, 2)),
         "vocab_char_count": vocab_char_count,
         "vocab_word_count": vocab_word_count,
-        "latency_profile_ms": {
-            "p50": p50,
-            "p95": p95,
-            "p99": p99,
-            "mean": mean_lat
-        }
+        "latency_profile_ms": model_latency_profile,
+        "fallback_latency_profile_ms": fallback_latency_profile
     },
     "demo_outputs": demo_outputs,
     "robustness_experiment": {
